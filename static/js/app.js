@@ -1,7 +1,7 @@
 // Use D3 fetch to read the JSON file
 // The data from the JSON file is arbitrarily named importedData as the argument
 d3.json("data/samples.json").then((importedData) => {
-    //console.log(importedData);
+    // console.log(importedData);
     var data = importedData;
 
     // Sort the data array using the sample_values value
@@ -23,8 +23,14 @@ function subjectID(){
       .text(name)
       .property("value", name);
     });
+  var initial = names[0];
+  console.log(initial);
+  
+
   });
 };
+
+subjectID();
 
 //filter page by the dropdown?
 
@@ -37,42 +43,56 @@ function subjectID(){
 //otu_ids
 //sample_values for each otu_id
 
-var ids = importedData.samples.id
-var otu_ids = importedData.samples.otu_ids;
-var sample_values = importedData.samples.sample_values;
+// var ids = importedData.samples.id
 
 
-// Slice the first 10 objects for plotting
-otu_ids = otu_ids.slice(0, 10);
+function charts(sample){
+  d3.json("data/samples.json").then((importedData) => {
+    
+    var samples = importedData.samples;
+    var filteredSamples = samples.filter(subject => subject.id == sample);
+    var filtered = filteredSamples[0]
+    // console.log(filteredSamples);
+    var otu_ids = filtered.otu_ids;
+    var otu_labels = filtered.otu_labels;
+    var sample_values = filtered.sample_values;
 
-  // Trace1 for the Sample Data
-  var trace1 = {
-    x: data.map(row => row.sample_values),
-    y: data.map(row => row.otu_ids),
-    text: data.map(row => row.otu_ids),
-    name: "Samples",
-    type: "bar",
-    orientation: "h"
-  };
+  //Trace1 for the Sample Data
+    var trace1 = {
+      x: sample_values,
+      y: otu_ids,
+      text: otu_labels,
+      name: "Samples",
+      type: "bar",
+      orientation: "h"
+    };
 
-  // data
-  var chartData = [trace1];
+    // data
+    var chartData = [trace1];
 
-  // Apply the group bar mode to the layout
-  var layout = {
-    title: "Placeholder title",
-    xaxis: { title: "Placeholder X" },
-    yaxis: { title: "Placeholder Y"}
-    margin: {
-      l: 100,
-      r: 100,
-      t: 100,
-      b: 100
-    }
+    // Apply the group bar mode to the layout
+    var layout = {
+      title: "Placeholder title",
+      xaxis: { title: "Placeholder X" },
+      yaxis: { title: "Placeholder Y"}
+
   };
 
   // Render the plot to the div tag with id "plot"
   Plotly.newPlot("bar", chartData, layout);
+
+});
+};
+
+barChart();
+
+
+// // Slice the first 10 objects for plotting
+// otu_ids = otu_ids.slice(0, 10);
+
+//   
+
+
 
   // function updatePage(){
 //   
@@ -82,4 +102,3 @@ otu_ids = otu_ids.slice(0, 10);
 //   console.log(dropdownValue);
 // }
 //
-subjectID();
