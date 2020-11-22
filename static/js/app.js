@@ -42,21 +42,22 @@ function charts(sample){
     var filtered = filteredSamples[0];
     // console.log(filteredSamples);
 
+    var sample_values = filtered.sample_values;
     var otu_ids = filtered.otu_ids;
     var otu_labels = filtered.otu_labels;
-    var sample_values = filtered.sample_values.slice(0,10);
+
 
   //Trace1 for the Sample Data
     var trace1 = {
       x: sample_values,
-      y: otu_ids,
+      y: otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`),
       text: otu_labels,
       name: "Samples",
       type: "bar",
       orientation: "h",
       transforms:[{
         type: "sort",
-        target: "x",
+        target: "y",
         order: "descending"
       }]
     };
@@ -71,26 +72,39 @@ function charts(sample){
       yaxis: { title: "OTU IDs"}
   };
 
-   // Render the plot to the div tag with id "plot"
-   Plotly.newPlot("bar", chartData, layout);
+//Trace1 for the Sample Data
+  var trace2 = {
+    x: otu_ids,
+    y: sample_values,
+    text: otu_labels,
+    mode: 'markers',
+    marker: {
+    size: sample_values,
+    color: otu_ids,
+    colorscale: "Jet"
+    },
+    //name: "Samples",
+    type: "bubble"
+    
+    };
 
-});
+  // data
+  var bubbleData = [trace2];
+
+// Apply the bubble mode to the layout
+  var bubbleLayout = {
+    title: "Sample Values by OTU IDs",
+    xaxis: { title: "OTU IDs" },
+    yaxis: { title: "Sample Values"}
+  };
+
+   // Render the bar plot to the div tag with id "bar"
+   Plotly.newPlot("bar", chartData, layout);
+   // Render the scatter plot to the div tag with id "bubble"
+   Plotly.newPlot("bubble", bubbleData, bubbleLayout);
+  });
 };
 
 subjectID();
 //charts();
 
-
-// // Slice the first 10 objects for plotting
-// otu_ids = otu_ids.slice(0, 10);
-
-//   
-
-  // function updatePage(){
-//   
-
-//   var dropdownID = dropdown.property("id");
-//   var dropdownValue = dropdown.property("value")
-//   console.log(dropdownValue);
-// }
-//
