@@ -5,6 +5,7 @@ d3.json("data/samples.json").then((importedData) => {
   var data = importedData;
 });
 
+// function to initially populate the page with the first subject ID
 function subjectID() {
 
   // Get a reference to the subject ID dropdown
@@ -29,7 +30,7 @@ function subjectID() {
 };
 
 
-
+// function to handle a change in the subject dropdown 
 function optionChanged(changeSample) {
   charts(changeSample);
   demographics(changeSample);
@@ -38,34 +39,33 @@ function optionChanged(changeSample) {
 
 
 // Populate Demographic info
-function demographics() {
+function demographics(sample) {
   d3.json("data/samples.json").then((importedData) => {
 
     var metadata = importedData.metadata;
-    var filteredMetadata = metadata.filter(subject => subject.id == metadata);
+    var filteredMetadata = metadata.filter(subject => subject.id == sample);
     var filtered = filteredMetadata[0];
 
     // Get a reference to the Demographics panel
-    var dropdown = d3.select("#sample-metadata");
+    var demographic = d3.select("#sample-metadata");
 
     // Clear the demographics panel 
-    dropdown.html("");
+    demographic.html("");
 
     Object.entries(filtered).forEach(([key, value]) => {
-      dropdown.append("h5").text(`${key}: ${value}`);
+      demographic.append("h5").text(`${key}: ${value}`);
   });
 });
 };
 
-
+// function for the bar chart and bubble chart
 function charts(sample){
   d3.json("data/samples.json").then((importedData) => {
 
     var samples = importedData.samples;
     var filteredSamples = samples.filter(subject => subject.id == sample);
     var filtered = filteredSamples[0];
-    // console.log(filteredSamples);
-
+   
     var sample_values = filtered.sample_values;
     var otu_ids = filtered.otu_ids;
     var otu_labels = filtered.otu_labels;
@@ -96,7 +96,7 @@ function charts(sample){
       yaxis: { title: "OTU IDs"}
   };
 
-  //Trace1 for the Sample Data
+  // Trace2 for the Sample Data
   var trace2 = {
     x: otu_ids,
     y: sample_values,
@@ -107,7 +107,6 @@ function charts(sample){
     color: otu_ids,
     colorscale: "Jet"
     },
-    //name: "Samples",
     type: "bubble"
     
     };
@@ -130,6 +129,7 @@ function charts(sample){
   });
 };
 
+// Initial load of the charts and metadata panel based on 1st subject ID
 subjectID();
 
 
