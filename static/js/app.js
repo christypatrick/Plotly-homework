@@ -1,7 +1,7 @@
 // Use D3 fetch to read the JSON file
 // The data from the JSON file is arbitrarily named importedData as the argument
 d3.json("data/samples.json").then((importedData) => {
-  // console.log(importedData);
+
   var data = importedData;
 });
 
@@ -24,6 +24,7 @@ function subjectID() {
 
   var initial = names[0];
   charts(initial);
+  demographics(initial);
   });
 };
 
@@ -31,7 +32,30 @@ function subjectID() {
 
 function optionChanged(changeSample) {
   charts(changeSample);
-}
+  demographics(changeSample);
+};
+
+
+
+// Populate Demographic info
+function demographics() {
+  d3.json("data/samples.json").then((importedData) => {
+
+    var metadata = importedData.metadata;
+    var filteredMetadata = metadata.filter(subject => subject.id == metadata);
+    var filtered = filteredMetadata[0];
+
+    // Get a reference to the Demographics panel
+    var dropdown = d3.select("#sample-metadata");
+
+    // Clear the demographics panel 
+    dropdown.html("");
+
+    Object.entries(filtered).forEach(([key, value]) => {
+      dropdown.append("h5").text(`${key}: ${value}`);
+  });
+});
+};
 
 
 function charts(sample){
@@ -72,7 +96,7 @@ function charts(sample){
       yaxis: { title: "OTU IDs"}
   };
 
-//Trace1 for the Sample Data
+  //Trace1 for the Sample Data
   var trace2 = {
     x: otu_ids,
     y: sample_values,
@@ -91,7 +115,7 @@ function charts(sample){
   // data
   var bubbleData = [trace2];
 
-// Apply the bubble mode to the layout
+  // Apply the bubble mode to the layout
   var bubbleLayout = {
     title: "Sample Values by OTU IDs",
     xaxis: { title: "OTU IDs" },
@@ -100,11 +124,12 @@ function charts(sample){
 
    // Render the bar plot to the div tag with id "bar"
    Plotly.newPlot("bar", chartData, layout);
+
    // Render the scatter plot to the div tag with id "bubble"
    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
   });
 };
 
 subjectID();
-//charts();
+
 
